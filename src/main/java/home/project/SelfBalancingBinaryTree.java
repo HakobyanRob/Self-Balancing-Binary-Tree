@@ -1,6 +1,5 @@
 package home.project;
 
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -13,7 +12,7 @@ public class SelfBalancingBinaryTree {
         return size;
     }
 
-/*    public void add(int value) {
+    public void add(int value) {
         root = addRecursive(root, value);
     }
 
@@ -32,36 +31,124 @@ public class SelfBalancingBinaryTree {
         }
 
         return current;
-    }*/
+    }
 
     public Node find(int value) {
         return findRecursive(root, value);
     }
 
     public Node addIteratively(int value) {
-        Node current = root;
-        Node temp = null;
+        Node temp = root;
+        Node current = null;
+        boolean leftInsert = false;
 
-        while (current != null) {
-            temp = current;
-            if (current.value < value) {
-                current = current.right;
-            } else if (current.value > value) {
-                current = current.left;
+        while (temp != null) {
+            current = temp;
+            if (temp.value < value) {
+                temp = temp.right;
+            } else if (temp.value > value) {
+                temp = temp.left;
             } else {
-                return temp;
+                return current;
             }
         }
 
-        if (temp == null) {
+        if (current == null) {                     // New tree is created
             root = new Node(value);
-        } else if (temp.value > value) {
-            temp.left = new Node(value);
-        } else {
-            temp.right = new Node(value);
+        } else if (current.value > value) {        // Inserted value goes to the left node
+            current.left = new Node(value);
+            current.left.parent = current;
+            leftInsert = true;
+        } else {                                // Inserted value goes to the right node
+            current.right = new Node(value);
+            current.right.parent = current;
+            leftInsert = false;
         }
+
         size++;
-        return temp;
+
+        if (current != null && current.parent != null) {
+            int balanceDif = calculateBalanceDif(current);
+            if (balanceDif < -1 || balanceDif > 1) {
+                if (balanceDif > 1) {
+                    if (leftInsert) {
+                        rotateRight(current);
+                    } else {
+                        rotateLeftRight(current);
+                    }
+                }
+                if (balanceDif < -1) {
+                    if (!leftInsert) {
+                        rotateLeft(current);
+                    } else {
+                        rotateRightLeft(current);
+                    }
+                }
+                System.out.println("PARENT UNBALANCED!" + current.value);
+//                balance(current, balanceDif);
+            }
+        }
+
+        return current;
+    }
+
+    private void rotateLeftRight(Node current) {
+        Node child = current.right;
+        child.parent = current.parent;
+        current.parent.left = child;
+        child.left = current;
+        current.parent = child;
+        current.right = null;
+
+        rotateRight(child);
+    }
+
+    private void rotateRightLeft(Node current) {
+        Node child = current.left;
+        child.parent = current.parent;
+        current.parent.right = child;
+        child.right = current;
+        current.parent = child;
+        current.left = null;
+
+        rotateLeft(child);
+    }
+
+    private void rotateRight(Node current) {
+        Node parent = current.parent;
+        current.right = parent;
+        parent.left = null;
+        if (parent.parent != null) {
+            current.parent = parent.parent;
+        } else {
+            current.parent = null;
+            root = current;
+        }
+        parent.parent = current;
+    }
+
+    private void rotateLeft(Node current) {
+        Node parent = current.parent;
+        current.left = parent;
+        parent.right = null;
+        if (parent.parent != null) {
+            current.parent = parent.parent;
+        } else {
+            current.parent = null;
+            root = current;
+        }
+        parent.parent = current;
+    }
+
+    private int calculateBalanceDif(Node current) {
+        return longestBranch(current.parent.left) - longestBranch(current.parent.right);
+    }
+
+    private int longestBranch(Node node) {
+        if (node == null) {
+            return 0;
+        }
+        return 1 + Math.max(longestBranch(node.left), longestBranch(node.right));
     }
 
     public Node findIteratively(int value) {
