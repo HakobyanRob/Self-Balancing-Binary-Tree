@@ -1,4 +1,9 @@
-package home.project;
+/*
+ * Copyright (c) 2021.
+ * @Author https://github.com/HakobyanRob
+ */
+
+package com.home;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -39,57 +44,61 @@ public class SelfBalancingBinaryTree {
 
     public Node addIteratively(int value) {
         Node temp = root;
-        Node current = null;
-        boolean leftInsert = false;
+        Node parent = null;
+        boolean leftInsert;
 
         while (temp != null) {
-            current = temp;
+            parent = temp;
             if (temp.value < value) {
                 temp = temp.right;
             } else if (temp.value > value) {
                 temp = temp.left;
             } else {
-                return current;
+                return parent;
             }
-        }
-
-        if (current == null) {                     // New tree is created
-            root = new Node(value);
-        } else if (current.value > value) {        // Inserted value goes to the left node
-            current.left = new Node(value);
-            current.left.parent = current;
-            leftInsert = true;
-        } else {                                // Inserted value goes to the right node
-            current.right = new Node(value);
-            current.right.parent = current;
-            leftInsert = false;
         }
 
         size++;
-
-        if (current != null && current.parent != null) {
-            int balanceDif = calculateBalanceDif(current);
-            if (balanceDif < -1 || balanceDif > 1) {
-                if (balanceDif > 1) {
-                    if (leftInsert) {
-                        rotateRight(current);
-                    } else {
-                        rotateLeftRight(current);
-                    }
-                }
-                if (balanceDif < -1) {
-                    if (!leftInsert) {
-                        rotateLeft(current);
-                    } else {
-                        rotateRightLeft(current);
-                    }
-                }
-                System.out.println("PARENT UNBALANCED!" + current.value);
-//                balance(current, balanceDif);
-            }
+        if (parent == null) {                     // New tree is created
+            root = new Node(value);
+            return root;
+        } else if (parent.value > value) {        // Inserted value goes to the left node
+            parent.left = new Node(value);
+            parent.left.parent = parent;
+            leftInsert = true;
+        } else {                                // Inserted value goes to the right node
+            parent.right = new Node(value);
+            parent.right.parent = parent;
+            leftInsert = false;
         }
 
-        return current;
+
+        Node insertedNode = leftInsert ? parent.left : parent.right;
+        if (parent.parent != null) {
+            while (parent.parent != null) {
+                Node current = parent;
+                parent = parent.parent;
+                int balanceDif = calculateBalanceDif(parent);
+                if (balanceDif < -1 || balanceDif > 1) {
+                    if (balanceDif > 1) {
+                        if (leftInsert) {
+                            rotateRight(current);
+                        } else {
+                            rotateLeftRight(current);
+                        }
+                    }
+                    if (balanceDif < -1) {
+                        if (!leftInsert) {
+                            rotateLeft(current);
+                        } else {
+                            rotateRightLeft(current);
+                        }
+                    }
+                    System.out.println("PARENT UNBALANCED!" + insertedNode.value);
+                }
+            }
+        }
+        return insertedNode;
     }
 
     private void rotateLeftRight(Node current) {
@@ -115,24 +124,33 @@ public class SelfBalancingBinaryTree {
     }
 
     private void rotateRight(Node current) {
+        if (current.right != null) {
+            current.left.right = current.right;
+        }
         Node parent = current.parent;
         current.right = parent;
         parent.left = null;
         if (parent.parent != null) {
             current.parent = parent.parent;
+            parent.parent.right = current;
         } else {
             current.parent = null;
             root = current;
         }
+
         parent.parent = current;
     }
 
     private void rotateLeft(Node current) {
+        if (current.left != null) {
+            current.right.left = current.left;
+        }
         Node parent = current.parent;
         current.left = parent;
         parent.right = null;
         if (parent.parent != null) {
             current.parent = parent.parent;
+            parent.parent.left = current;
         } else {
             current.parent = null;
             root = current;
@@ -141,7 +159,7 @@ public class SelfBalancingBinaryTree {
     }
 
     private int calculateBalanceDif(Node current) {
-        return longestBranch(current.parent.left) - longestBranch(current.parent.right);
+        return longestBranch(current.left) - longestBranch(current.right);
     }
 
     private int longestBranch(Node node) {

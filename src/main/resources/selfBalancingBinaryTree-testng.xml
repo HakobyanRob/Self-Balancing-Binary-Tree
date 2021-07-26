@@ -1,0 +1,15 @@
+<!--
+  ~ Copyright (c) 2021.
+  ~ @Author https://github.com/HakobyanRob
+  -->
+
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+
+<suite name="Insertion Suite" verbose="1" >
+    <test name="Insertion">
+        <classes>
+            <class name="com.home.test.InsertionTest"/>
+            <class name="com.home.test.InsertionBalancingTest"/>
+        </classes>
+    </test>
+</suite>

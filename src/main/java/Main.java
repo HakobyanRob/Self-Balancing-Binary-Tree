@@ -1,4 +1,9 @@
-import home.project.SelfBalancingBinaryTree;
+/*
+  Copyright (c) 2021.
+  @Author https://github.com/HakobyanRob
+ */
+
+import com.home.SelfBalancingBinaryTree;
 
 import java.util.Set;
 
@@ -11,10 +16,7 @@ public class Main {
         selfBalancingBinaryTree.addIteratively(45);
         selfBalancingBinaryTree.addIteratively(5);
         selfBalancingBinaryTree.addIteratively(4);
-        selfBalancingBinaryTree.addIteratively(9);
-        selfBalancingBinaryTree.addIteratively(3);
-        selfBalancingBinaryTree.addIteratively(12);
-        selfBalancingBinaryTree.addIteratively(56);
+        selfBalancingBinaryTree.addIteratively(10);
 
         System.out.println(selfBalancingBinaryTree.getSize());
 
