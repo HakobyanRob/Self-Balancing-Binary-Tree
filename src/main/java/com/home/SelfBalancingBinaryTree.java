@@ -17,20 +17,24 @@ public class SelfBalancingBinaryTree {
         return size;
     }
 
-    public void add(int value) {
-        root = addRecursive(root, value);
+    public Node getRoot() {
+        return root;
     }
 
-    private Node addRecursive(Node current, int value) {
+    public void addRecursively(int value) {
+        root = addRecursively(root, value);
+    }
+
+    private Node addRecursively(Node current, int value) {
         if (current == null) { // adding value
             size++;
             return new Node(value);
         }
 
         if (current.value < value) {
-            current.right = addRecursive(current.right, value);
+            current.right = addRecursively(current.right, value);
         } else if (current.value > value) {
-            current.left = addRecursive(current.left, value);
+            current.left = addRecursively(current.left, value);
         } else {
             return current; // value already exists
         }
@@ -38,8 +42,8 @@ public class SelfBalancingBinaryTree {
         return current;
     }
 
-    public Node find(int value) {
-        return findRecursive(root, value);
+    public Node findRecursively(int value) {
+        return findRecursively(root, value);
     }
 
     public Node addIteratively(int value) {
@@ -74,12 +78,14 @@ public class SelfBalancingBinaryTree {
 
 
         Node insertedNode = leftInsert ? parent.left : parent.right;
+        boolean isUnbalanced = true;
         if (parent.parent != null) {
-            while (parent.parent != null) {
+            while (parent.parent != null && isUnbalanced) {
                 Node current = parent;
                 parent = parent.parent;
                 int balanceDif = calculateBalanceDif(parent);
-                if (balanceDif < -1 || balanceDif > 1) {
+                isUnbalanced = balanceDif < -1 || balanceDif > 1;
+                if (isUnbalanced) {
                     if (balanceDif > 1) {
                         if (leftInsert) {
                             rotateRight(current);
@@ -132,7 +138,7 @@ public class SelfBalancingBinaryTree {
         parent.left = null;
         if (parent.parent != null) {
             current.parent = parent.parent;
-            parent.parent.right = current;
+            current.parent.left = current;
         } else {
             current.parent = null;
             root = current;
@@ -150,7 +156,7 @@ public class SelfBalancingBinaryTree {
         parent.right = null;
         if (parent.parent != null) {
             current.parent = parent.parent;
-            parent.parent.left = current;
+            current.parent.right = current;
         } else {
             current.parent = null;
             root = current;
@@ -185,13 +191,13 @@ public class SelfBalancingBinaryTree {
     }
 
 
-    private Node findRecursive(Node current, int value) {
+    private Node findRecursively(Node current, int value) {
         if (current == null) {
             return null;
         } else if (current.value > value) {
-            return findRecursive(current.left, value);
+            return findRecursively(current.left, value);
         } else if (current.value < value) {
-            return findRecursive(current.right, value);
+            return findRecursively(current.right, value);
         } else {
             return current;
         }

@@ -19,50 +19,70 @@ public class InsertionTest {
     public void createSampleTree() {
         selfBalancingBinaryTree = new SelfBalancingBinaryTree();
 
-        selfBalancingBinaryTree.addIteratively(1);
+        int value = 0;
+        selfBalancingBinaryTree.addIteratively(value);
+        Assert.assertEquals(selfBalancingBinaryTree.findIteratively(value), selfBalancingBinaryTree.getRoot());
+        Assert.assertNull(selfBalancingBinaryTree.findIteratively(value).getRight());
+        Assert.assertNull(selfBalancingBinaryTree.findIteratively(value).getLeft());
     }
 
     @Test
-    public void addUniqueValue() {
-        int uniqueValue = 2;
-        System.out.println("Adding unique value: " + uniqueValue);
-        Node node = selfBalancingBinaryTree.addIteratively(uniqueValue);
+    public void addIterativelyTest() {
+        int value = 1;
+        System.out.println("Adding Iteratively value: " + value);
+        Node node = selfBalancingBinaryTree.addIteratively(value);
         Assert.assertNotNull(node);
-        Assert.assertEquals(node.getValue(), uniqueValue);
-        Node foundNodeIteratively = selfBalancingBinaryTree.findIteratively(uniqueValue);
+        Assert.assertEquals(node.getValue(), value);
+        Node foundNodeIteratively = selfBalancingBinaryTree.findIteratively(value);
         Assert.assertNotNull(foundNodeIteratively);
         Assert.assertEquals(foundNodeIteratively.getValue(), node.getValue());
-        Node foundNodeRecursively = selfBalancingBinaryTree.find(uniqueValue);
+        Node foundNodeRecursively = selfBalancingBinaryTree.findRecursively(value);
         Assert.assertNotNull(foundNodeRecursively);
         Assert.assertEquals(foundNodeRecursively.getValue(), node.getValue());
-        System.out.println("Added unique value successfully: " + uniqueValue);
+        System.out.println("Added value Iteratively successfully: " + value);
 
-        uniqueValue = -5;
-        System.out.println("Adding unique value: " + uniqueValue);
-        node = selfBalancingBinaryTree.addIteratively(uniqueValue);
+        value = -1;
+        System.out.println("Adding value Iteratively: " + value);
+        node = selfBalancingBinaryTree.addIteratively(value);
         Assert.assertNotNull(node);
-        Assert.assertEquals(node.getValue(), uniqueValue);
-        foundNodeIteratively = selfBalancingBinaryTree.findIteratively(uniqueValue);
+        Assert.assertEquals(node.getValue(), value);
+        foundNodeIteratively = selfBalancingBinaryTree.findIteratively(value);
         Assert.assertNotNull(foundNodeIteratively);
         Assert.assertEquals(foundNodeIteratively.getValue(), node.getValue());
-        foundNodeRecursively = selfBalancingBinaryTree.find(uniqueValue);
+        foundNodeRecursively = selfBalancingBinaryTree.findRecursively(value);
         Assert.assertNotNull(foundNodeRecursively);
         Assert.assertEquals(foundNodeRecursively.getValue(), node.getValue());
-        System.out.println("Added unique value successfully: " + uniqueValue);
+        Assert.assertEquals(foundNodeRecursively, foundNodeIteratively);
+        System.out.println("Added value Iteratively successfully: " + value);
     }
 
-    @Test
-    public void addDuplicateValue() {
-        int duplicateValue = 1;
-        System.out.println("Adding duplicate value: " + duplicateValue);
-        Node node = selfBalancingBinaryTree.addIteratively(duplicateValue);
+    @Test(dependsOnMethods = "addIterativelyTest", enabled = false)
+    public void addRecursivelyTest() {
+        int value = 2;
+        System.out.println("Adding value Recursively: " + value);
+        selfBalancingBinaryTree.addRecursively(value);
+        Node node = selfBalancingBinaryTree.findRecursively(value);
         Assert.assertNotNull(node);
-        Assert.assertEquals(node.getValue(), duplicateValue);
-        Node foundNodeIteratively = selfBalancingBinaryTree.findIteratively(duplicateValue);
-        Assert.assertNotNull(foundNodeIteratively);
-        Assert.assertEquals(foundNodeIteratively.getValue(), node.getValue());
-        Node foundNodeRecursively = selfBalancingBinaryTree.find(duplicateValue);
-        Assert.assertNotNull(foundNodeRecursively);
-        Assert.assertEquals(foundNodeRecursively.getValue(), node.getValue());
+        Assert.assertEquals(node.getValue(), value);
+        Node parent = selfBalancingBinaryTree.findRecursively(1);
+        Assert.assertNotNull(node.getParent());
+        Assert.assertEquals(node.getParent(), parent);
+        Assert.assertEquals(node, parent.getRight());
+        Assert.assertNull(node.getLeft());
+        Assert.assertNull(node.getRight());
+        System.out.println("Added value Recursively successfully: " + value);
+
+        value = -2;
+        System.out.println("Adding value Recursively: " + value);
+        selfBalancingBinaryTree.addRecursively(value);
+        node = selfBalancingBinaryTree.findRecursively(value);
+        Assert.assertNotNull(node);
+        Assert.assertEquals(node.getValue(), value);
+        parent = selfBalancingBinaryTree.findRecursively(-1);
+        Assert.assertEquals(node.getParent(), parent);
+        Assert.assertEquals(node, parent.getLeft());
+        Assert.assertNull(node.getLeft());
+        Assert.assertNull(node.getRight());
+        System.out.println("Added value Recursively successfully: " + value);
     }
 }
