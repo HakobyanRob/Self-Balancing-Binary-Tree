@@ -207,7 +207,7 @@ public class SelfBalancingBinaryTree {
         return getAllNodes(root);
     }
 
-    public Set<Integer> getAllNodes(Node current) {
+    private Set<Integer> getAllNodes(Node current) {
         Set<Integer> allNodes = new LinkedHashSet<>();
 
         if (current != null) {

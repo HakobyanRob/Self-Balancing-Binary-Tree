@@ -11,6 +11,9 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class InsertionTest {
 
     private SelfBalancingBinaryTree selfBalancingBinaryTree;
@@ -24,6 +27,7 @@ public class InsertionTest {
         Assert.assertEquals(selfBalancingBinaryTree.findIteratively(value), selfBalancingBinaryTree.getRoot());
         Assert.assertNull(selfBalancingBinaryTree.findIteratively(value).getRight());
         Assert.assertNull(selfBalancingBinaryTree.findIteratively(value).getLeft());
+        Assert.assertEquals(selfBalancingBinaryTree.getSize(), 1);
     }
 
     @Test
@@ -39,6 +43,7 @@ public class InsertionTest {
         Node foundNodeRecursively = selfBalancingBinaryTree.findRecursively(value);
         Assert.assertNotNull(foundNodeRecursively);
         Assert.assertEquals(foundNodeRecursively.getValue(), node.getValue());
+        Assert.assertEquals(selfBalancingBinaryTree.getSize(), 2);
         System.out.println("Added value Iteratively successfully: " + value);
 
         value = -1;
@@ -53,7 +58,9 @@ public class InsertionTest {
         Assert.assertNotNull(foundNodeRecursively);
         Assert.assertEquals(foundNodeRecursively.getValue(), node.getValue());
         Assert.assertEquals(foundNodeRecursively, foundNodeIteratively);
+        Assert.assertEquals(selfBalancingBinaryTree.getSize(), 3);
         System.out.println("Added value Iteratively successfully: " + value);
+
     }
 
     @Test(dependsOnMethods = "addIterativelyTest", enabled = false)
@@ -84,5 +91,17 @@ public class InsertionTest {
         Assert.assertNull(node.getLeft());
         Assert.assertNull(node.getRight());
         System.out.println("Added value Recursively successfully: " + value);
+    }
+
+    @Test(dependsOnMethods = "addIterativelyTest")
+    public void getAllNodesTest() {
+        Set<Integer> expectedAllNodes = new HashSet<>(){{
+            add(0);
+            add(-1);
+            add(1);
+        }};
+
+        Set<Integer> allNodes = selfBalancingBinaryTree.getAllNodes();
+        Assert.assertEquals(allNodes, expectedAllNodes);
     }
 }
